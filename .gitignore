@@ -1,0 +1,16 @@
+# Build artifacts
+target/
+
+# Docs & Claude
+docs/
+.claude/
+
+# Modules not yet started
+src/config.rs
+src/filter.rs
+src/particle.rs
+src/raycaster.rs
+src/renderer.rs
+src/robot.rs
+src/sensor_model.rs
+src/main.rs
