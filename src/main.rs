@@ -1,8 +1,9 @@
+#![allow(dead_code)]
 mod map;
 
 // mod config;
 // mod filter;
-// mod particle;
+mod particle;
 mod raycaster;
 // mod renderer;
 // mod robot;
