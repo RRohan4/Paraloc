@@ -5,8 +5,3 @@ target/
 docs/
 .claude/
 
-# Modules not yet started
-src/config.rs
-src/particle.rs
-src/renderer.rs
-src/robot.rs
