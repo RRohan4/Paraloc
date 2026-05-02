@@ -11,10 +11,8 @@ impl Map {
         let img = image::open(path).unwrap().to_luma8();
         let width = img.width() as usize;
         let height = img.height() as usize;
-        let data = img.into_raw();
-        
+        let data: Vec<u8> = img.into_raw().iter().map(|&v| if v < 128 { 1 } else { 0 }).collect();
         Self::from_raw(data, width, height)
-
     }
     
     pub fn from_raw(data: Vec<u8>, width: usize, height: usize) -> Self {
@@ -23,12 +21,15 @@ impl Map {
 
     // Convert float world coords to tile indices (floor)
     pub fn is_wall(&self, x: f32, y: f32) ->bool {
+        if !x.is_finite() || !y.is_finite() || x < 0.0 || y < 0.0 {
+            return true;
+        }
         let tx = x as usize;
         let ty = y as usize;
 
         if tx >= self.width || ty >= self.height {
             return true;
-        } 
+        }
 
         self.data[ty * self.width + tx] != 0
     }
@@ -38,6 +39,9 @@ impl Map {
     pub fn dimensions(&self) -> (usize, usize) {
         (self.width, self.height)
     }
+
+    pub fn width(&self) -> usize { self.width }
+    pub fn height(&self) -> usize { self.height }
 }
 
 #[cfg(test)]

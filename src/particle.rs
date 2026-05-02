@@ -132,6 +132,18 @@ mod tests {
     }
 
     #[test]
+    fn resample_with_uniform_weights_preserves_diversity() {
+        let n = 1000;
+        let w = 1.0 / n as f32;
+        let particles: Vec<Particle> = (0..n).map(|i| particle(i as f32, 0.0, 0.0, w)).collect();
+        let result = resample(&particles, &mut make_rng());
+        let mut xs: Vec<f32> = result.iter().map(|p| p.x).collect();
+        xs.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        xs.dedup();
+        assert!(xs.len() > n / 2);
+    }
+
+    #[test]
     fn resample_preserves_particle_count() {
         let particles = vec![
             particle(0.0, 0.0, 0.0, 0.25),

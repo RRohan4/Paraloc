@@ -1,14 +1,7 @@
-#![allow(dead_code)]
-mod map;
-
-// mod config;
-mod filter;
-mod sensor_model;
-mod particle;
-mod raycaster;
-// mod renderer;
-// mod robot;
-// mod sensor_model;
+use paraloc::renderer::RendererPlugin;
 
 fn main() {
+    bevy::app::App::new()
+        .add_plugins(RendererPlugin)
+        .run();
 }

@@ -123,6 +123,17 @@ mod tests {
     }
 
     #[test]
+    fn particle_behind_wall_receives_low_weight() {
+        let map = walled_room();
+        let real = real_scan(&map);
+        let model = SequentialSensorModel { sigma: 0.1, n_rays: 36 };
+        let particles = vec![particle(2.5, 2.5, 0.0), particle(0.5, 0.5, 0.0)];
+        let mut weights = vec![0.0_f32; 2];
+        model.update_weights(&particles, &real, &map, &mut weights);
+        assert!(weights[0] - weights[1] > 50.0);
+    }
+
+    #[test]
     fn parallel_matches_sequential() {
         let map = walled_room();
         let real = real_scan(&map);
