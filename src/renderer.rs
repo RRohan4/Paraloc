@@ -172,8 +172,8 @@ fn setup(
         commands.spawn((
             ParticleDot,
             Sprite {
-                color: Color::srgba(0.4, 0.7, 1.0, 0.4),
-                custom_size: Some(Vec2::splat(2.5)),
+                color: Color::srgba(0.55, 0.8, 1.0, 0.25),
+                custom_size: Some(Vec2::splat(1.8)),
                 ..default()
             },
             Transform::from_xyz(0.0, 0.0, 1.0),
@@ -253,7 +253,10 @@ fn game_loop(
     robot.0.apply_motion(&delta, &map.0);
     let ranges = robot.0.get_scan(&map.0, config.0.n_rays);
     last_scan.0 = ranges.clone();
-    filter.0.step(&delta, &ranges, &map.0, &mut rng.0);
+
+    if forward != 0.0 || turn != 0.0 {
+        filter.0.step(&delta, &ranges, &map.0, &mut rng.0);
+    }
 }
 
 fn sync_robot_marker(
@@ -318,29 +321,12 @@ fn sync_lidar_beams(
 fn sync_particles(
     filter: Res<AppFilter>,
     layout: Res<Layout>,
-    mut q: Query<(&mut Transform, &mut Sprite), With<ParticleDot>>,
+    mut q: Query<&mut Transform, With<ParticleDot>>,
 ) {
     let particles = filter.0.particles();
-    if particles.is_empty() {
-        return;
-    }
-    let n = particles.len() as f32;
-    let cx = particles.iter().map(|p| p.x).sum::<f32>() / n;
-    let cy = particles.iter().map(|p| p.y).sum::<f32>() / n;
-
-    for ((mut t, mut sprite), p) in q.iter_mut().zip(particles.iter()) {
+    for (mut t, p) in q.iter_mut().zip(particles.iter()) {
         let pos = world_to_screen(Vec2::new(p.x, p.y), &layout);
         t.translation.x = pos.x;
         t.translation.y = pos.y;
-        let dx = p.x - cx;
-        let dy = p.y - cy;
-        let d = (dx * dx + dy * dy).sqrt();
-        let closeness = (-d * 0.4).exp();
-        sprite.color = Color::srgba(
-            0.35 + 0.35 * closeness,
-            0.7 + 0.3 * closeness,
-            1.0,
-            0.25 + 0.6 * closeness,
-        );
     }
 }

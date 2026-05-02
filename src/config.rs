@@ -15,13 +15,13 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            particle_count: 3000,
+            particle_count: 500,
             translation_sigma: 0.02,
             rotation_sigma: 0.02,
-            sensor_sigma: 0.2,
+            sensor_sigma: 1.2,
             map_path: "map.png".to_string(),
             n_rays: 36,
-            robot_spawn_x: 5.0,
+            robot_spawn_x: 7.5,
             robot_spawn_y: 5.0,
         }
     }
