@@ -49,15 +49,18 @@ impl SensorModel for ParallelSensorModel {
         weights: &mut [f32],
     ) {
         use rayon::prelude::*;
-        particles.par_iter().zip(weights.par_iter_mut()).for_each(|(p, w)| {
-            let simulated = crate::raycaster::scan((p.x, p.y), p.theta, self.n_rays, map);
-            let mut log_weight = 0.0_f32;
-            for j in 0..self.n_rays {
-                let diff = real_ranges[j] - simulated[j];
-                log_weight += -0.5 * (diff / self.sigma).powi(2);
-            }
-            *w = log_weight;
-        });
+        particles
+            .par_iter()
+            .zip(weights.par_iter_mut())
+            .for_each(|(p, w)| {
+                let simulated = crate::raycaster::scan((p.x, p.y), p.theta, self.n_rays, map);
+                let mut log_weight = 0.0_f32;
+                for j in 0..self.n_rays {
+                    let diff = real_ranges[j] - simulated[j];
+                    log_weight += -0.5 * (diff / self.sigma).powi(2);
+                }
+                *w = log_weight;
+            });
     }
 }
 
@@ -87,13 +90,24 @@ mod tests {
     fn walled_room() -> Map {
         // 5x5 room, walls on edges, open interior
         let mut data = vec![0u8; 25];
-        for x in 0..5 { data[x] = 1; data[20 + x] = 1; }
-        for y in 0..5 { data[y * 5] = 1; data[y * 5 + 4] = 1; }
+        for x in 0..5 {
+            data[x] = 1;
+            data[20 + x] = 1;
+        }
+        for y in 0..5 {
+            data[y * 5] = 1;
+            data[y * 5 + 4] = 1;
+        }
         Map::from_raw(data, 5, 5)
     }
 
     fn particle(x: f32, y: f32, theta: f32) -> Particle {
-        Particle { x, y, theta, weight: 1.0 }
+        Particle {
+            x,
+            y,
+            theta,
+            weight: 1.0,
+        }
     }
 
     fn real_scan(map: &Map) -> Vec<f32> {
@@ -104,18 +118,28 @@ mod tests {
     fn particle_at_true_pose_outweighs_distant_particle() {
         let map = walled_room();
         let real = real_scan(&map);
-        let model = SequentialSensorModel { sigma: 0.1, n_rays: 36 };
+        let model = SequentialSensorModel {
+            sigma: 0.1,
+            n_rays: 36,
+        };
         let particles = vec![particle(2.5, 2.5, 0.0), particle(1.1, 1.1, 0.0)];
         let mut weights = vec![0.0_f32; 2];
         model.update_weights(&particles, &real, &map, &mut weights);
-        assert!(weights[0] > weights[1], "true pose should score higher: {:?}", weights);
+        assert!(
+            weights[0] > weights[1],
+            "true pose should score higher: {:?}",
+            weights
+        );
     }
 
     #[test]
     fn identical_ranges_produce_maximum_weight() {
         let map = walled_room();
         let real = real_scan(&map);
-        let model = SequentialSensorModel { sigma: 0.1, n_rays: 36 };
+        let model = SequentialSensorModel {
+            sigma: 0.1,
+            n_rays: 36,
+        };
         let particles = vec![particle(2.5, 2.5, 0.0)];
         let mut weights = vec![0.0_f32; 1];
         model.update_weights(&particles, &real, &map, &mut weights);
@@ -126,7 +150,10 @@ mod tests {
     fn particle_behind_wall_receives_low_weight() {
         let map = walled_room();
         let real = real_scan(&map);
-        let model = SequentialSensorModel { sigma: 0.1, n_rays: 36 };
+        let model = SequentialSensorModel {
+            sigma: 0.1,
+            n_rays: 36,
+        };
         let particles = vec![particle(2.5, 2.5, 0.0), particle(0.5, 0.5, 0.0)];
         let mut weights = vec![0.0_f32; 2];
         model.update_weights(&particles, &real, &map, &mut weights);
@@ -142,8 +169,14 @@ mod tests {
             particle(1.5, 1.5, 0.0),
             particle(3.0, 2.0, 1.0),
         ];
-        let seq = SequentialSensorModel { sigma: 0.2, n_rays: 36 };
-        let par = ParallelSensorModel { sigma: 0.2, n_rays: 36 };
+        let seq = SequentialSensorModel {
+            sigma: 0.2,
+            n_rays: 36,
+        };
+        let par = ParallelSensorModel {
+            sigma: 0.2,
+            n_rays: 36,
+        };
         let mut w_seq = vec![0.0_f32; 3];
         let mut w_par = vec![0.0_f32; 3];
         seq.update_weights(&particles, &real, &map, &mut w_seq);

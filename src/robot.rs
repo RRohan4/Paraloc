@@ -8,11 +8,11 @@ pub struct Robot {
 
 impl Robot {
     pub fn new(x: f32, y: f32, theta: f32) -> Self {
-        Robot {x, y, theta}
+        Robot { x, y, theta }
     }
 
     pub fn apply_motion(&mut self, delta: &MotionDelta, map: &Map) {
-        if !map.is_wall(self.x + delta.dx, self.y + delta.dy) {    
+        if !map.is_wall(self.x + delta.dx, self.y + delta.dy) {
             self.x += delta.dx;
             self.y += delta.dy;
         }
@@ -31,8 +31,14 @@ mod tests {
 
     fn walled_room() -> Map {
         let mut data = vec![0u8; 25];
-        for x in 0..5 { data[x] = 1; data[20 + x] = 1; }
-        for y in 0..5 { data[y * 5] = 1; data[y * 5 + 4] = 1; }
+        for x in 0..5 {
+            data[x] = 1;
+            data[20 + x] = 1;
+        }
+        for y in 0..5 {
+            data[y * 5] = 1;
+            data[y * 5 + 4] = 1;
+        }
         Map::from_raw(data, 5, 5)
     }
 
@@ -40,7 +46,11 @@ mod tests {
     fn motion_in_open_space_updates_pose() {
         let map = walled_room();
         let mut robot = Robot::new(2.5, 2.5, 0.0);
-        let delta = MotionDelta { dx: 0.2, dy: 0.1, dtheta: 0.1 };
+        let delta = MotionDelta {
+            dx: 0.2,
+            dy: 0.1,
+            dtheta: 0.1,
+        };
         robot.apply_motion(&delta, &map);
         assert!((robot.x - 2.7).abs() < 1e-5);
         assert!((robot.y - 2.6).abs() < 1e-5);
@@ -51,9 +61,17 @@ mod tests {
     fn motion_into_wall_is_blocked() {
         let map = walled_room();
         let mut robot = Robot::new(1.5, 2.5, 0.0);
-        let delta = MotionDelta { dx: -1.0, dy: 0.0, dtheta: 0.0 };
+        let delta = MotionDelta {
+            dx: -1.0,
+            dy: 0.0,
+            dtheta: 0.0,
+        };
         robot.apply_motion(&delta, &map);
-        assert!((robot.x - 1.5).abs() < 1e-5, "x should not change: {}", robot.x);
+        assert!(
+            (robot.x - 1.5).abs() < 1e-5,
+            "x should not change: {}",
+            robot.x
+        );
         assert!((robot.y - 2.5).abs() < 1e-5);
     }
 

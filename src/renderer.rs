@@ -104,8 +104,8 @@ impl Plugin for RendererPlugin {
             .insert_resource(layout)
             .add_plugins(DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
-                    resolution: WindowResolution::new(WINDOW_W, WINDOW_H)
-                        .with_scale_factor_override(1.0),
+                    resolution:
+                        WindowResolution::new(WINDOW_W, WINDOW_H).with_scale_factor_override(1.0),
                     title: "Paraloc — yellow=truth, green=estimate, WASD/arrows".into(),
                     ..default()
                 }),
@@ -153,10 +153,7 @@ fn setup(
             } else {
                 Color::srgb(0.07, 0.09, 0.13)
             };
-            let pos = world_to_screen(
-                Vec2::new(x as f32 + 0.5, y as f32 + 0.5),
-                &layout,
-            );
+            let pos = world_to_screen(Vec2::new(x as f32 + 0.5, y as f32 + 0.5), &layout);
             commands.spawn((
                 Sprite {
                     color,

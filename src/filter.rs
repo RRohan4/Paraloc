@@ -2,7 +2,7 @@ use rand::Rng;
 
 use crate::{
     map::Map,
-    particle::{MotionDelta, NoiseParams, Particle, predict, resample},
+    particle::{predict, resample, MotionDelta, NoiseParams, Particle},
     sensor_model::SensorModel,
 };
 
@@ -23,19 +23,35 @@ impl ParticleFilter {
         noise_params: NoiseParams,
     ) -> Self {
         let n = particles.len();
-        Self { particles, weights: vec![0.0_f32; n], sensor_model, noise_params }
+        Self {
+            particles,
+            weights: vec![0.0_f32; n],
+            sensor_model,
+            noise_params,
+        }
     }
 
-    pub fn step<R: Rng>(&mut self, motion: &MotionDelta, real_ranges: &[f32], map: &Map, rng: &mut R) {
+    pub fn step<R: Rng>(
+        &mut self,
+        motion: &MotionDelta,
+        real_ranges: &[f32],
+        map: &Map,
+        rng: &mut R,
+    ) {
         predict(&mut self.particles, motion, &self.noise_params, rng);
 
-        self.sensor_model.update_weights(&self.particles, real_ranges, map, &mut self.weights);
+        self.sensor_model
+            .update_weights(&self.particles, real_ranges, map, &mut self.weights);
 
         for (w, p) in self.weights.iter_mut().zip(self.particles.iter()) {
             *w += p.weight.max(f32::MIN_POSITIVE).ln();
         }
 
-        let max_log = self.weights.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
+        let max_log = self
+            .weights
+            .iter()
+            .cloned()
+            .fold(f32::NEG_INFINITY, f32::max);
         let mut total = 0.0_f32;
         for w in self.weights.iter_mut() {
             *w = (*w - max_log).exp();
@@ -46,7 +62,12 @@ impl ParticleFilter {
         }
 
         let n = self.particles.len();
-        let ess = 1.0 / self.particles.iter().map(|p| p.weight * p.weight).sum::<f32>();
+        let ess = 1.0
+            / self
+                .particles
+                .iter()
+                .map(|p| p.weight * p.weight)
+                .sum::<f32>();
         if ess < (n as f32) * ESS_FRAC {
             self.particles = resample(&self.particles, rng);
         }

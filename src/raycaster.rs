@@ -6,8 +6,16 @@ pub fn cast_ray(origin: (f32, f32), angle: f32, map: &Map) -> f32 {
     let dy = angle.sin();
     let tile_x = origin.0 as i32;
     let tile_y = origin.1 as i32;
-    let step_x = if dx == 0.0 { f32::INFINITY } else { 1.0 / dx.abs() };
-    let step_y = if dy == 0.0 { f32::INFINITY } else { 1.0 / dy.abs() };
+    let step_x = if dx == 0.0 {
+        f32::INFINITY
+    } else {
+        1.0 / dx.abs()
+    };
+    let step_y = if dy == 0.0 {
+        f32::INFINITY
+    } else {
+        1.0 / dy.abs()
+    };
     let mut dist_x = if dx > 0.0 {
         (tile_x as f32 + 1.0 - origin.0) / dx.abs()
     } else if dx < 0.0 {
@@ -53,7 +61,6 @@ pub fn scan(origin: (f32, f32), yaw: f32, n_rays: usize, map: &Map) -> Vec<f32> 
     dists
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -95,8 +102,14 @@ mod tests {
     fn full_scan_in_symmetric_room_returns_equal_ranges() {
         // 5x5 walled room, robot centered at (2.5, 2.5) — all 4 axis rays equal
         let mut data = vec![0u8; 25];
-        for x in 0..5 { data[x] = 1; data[20 + x] = 1; }
-        for y in 0..5 { data[y * 5] = 1; data[y * 5 + 4] = 1; }
+        for x in 0..5 {
+            data[x] = 1;
+            data[20 + x] = 1;
+        }
+        for y in 0..5 {
+            data[y * 5] = 1;
+            data[y * 5 + 4] = 1;
+        }
         let map = Map::from_raw(data, 5, 5);
         let ranges = scan((2.5, 2.5), 0.0, 4, &map);
         let first = ranges[0];
