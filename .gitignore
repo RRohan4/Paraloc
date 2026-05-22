@@ -1,7 +1,43 @@
-# Build artifacts
-target/
+# Rust
+/target/
+**/*.rs.bk
 
-# Docs & Claude
-docs/
+# Python / notebooks
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+*.egg-info/
+
+# Large generated artifacts (regenerate locally or store on Drive)
+/dataset_out/
+*.pt
+*.pth
+*.onnx
+*.bin
+!src/**/*.bin
+
+# Archives (upload to cloud, not git)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Local-only (not for the public repo)
 .claude/
+/docs/
 
+# Logs
+*.log
+
+# Default single-map output at repo root
+/map.png

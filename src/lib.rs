@@ -1,10 +1,7 @@
-#![allow(dead_code)]
 pub mod ambiguity;
 pub mod config;
-pub mod filter;
+pub mod dataset;
 pub mod map;
 pub mod particle;
 pub mod raycaster;
-pub mod renderer;
-pub mod robot;
 pub mod sensor_model;

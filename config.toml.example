@@ -1,0 +1,8 @@
+# Scoring parameters used by gen_dataset (see src/config.rs defaults).
+score_sensor_sigma = 15.0
+n_rays = 36
+map_size = 128
+n_score_particles = 200
+n_score_orientations = 16
+init_radius_tiles = 10
+output_dir = "dataset_out"
