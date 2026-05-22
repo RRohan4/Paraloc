@@ -87,7 +87,7 @@ This is computed independently at every open cell on every map. That is the grou
 - **Python 3.10+** — for training and inference
 - **GPU** — recommended for training (Colab T4 works); CPU inference is fine
 - **Disk** — ~3 GB for the full 200-map label export
-- **Time** — map gen: minutes; label gen: many hours on CPU; training: ~30–60 min on T4
+- **Time** — map gen: minutes; label gen: many hours on CPU; training: ~5 min on T4
 
 ---
 
