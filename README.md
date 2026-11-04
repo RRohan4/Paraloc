@@ -6,7 +6,7 @@ Given a 128×128 occupancy grid, Paraloc predicts a **localization-ambiguity hea
 
 ## Results
 
-Ground-truth Rust simulation labels vs. U-Net prediction on a held-out map (`map_129`, corr ≈ 0.91). Full-map inference runs in ~35 ms on CPU vs ~126 s for the Rust labeler (~3000× faster).
+Ground-truth Rust simulation labels vs. U-Net prediction on a held-out map (`map_129`, corr ≈ 0.91). Full-map inference runs in ~45 ms on CPU vs ~126 s for the Rust labeler (~3000× faster).
 
 ![Ground truth vs U-Net prediction on map_129](assets/compare_map_129.png)
 
@@ -94,7 +94,7 @@ This is computed independently at every open cell on every map. That is the grou
 ### Step 0 — Clone and build
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/RRohan4/Paraloc.git
 cd Paraloc
 cargo build --release
 ```
@@ -311,8 +311,3 @@ Paraloc/
 
 Generated locally (gitignored): `target/`, `dataset_out/`, `*.pt`, `.venv/`
 
----
-
-## License
-
-Add your license here if open-sourcing.

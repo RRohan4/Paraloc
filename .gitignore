@@ -41,3 +41,6 @@ Thumbs.db
 
 # Default single-map output at repo root
 /map.png
+/map.png
+/compare_map_129.png
+/pred_*.png
